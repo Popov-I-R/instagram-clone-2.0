@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import Post from "./Post";
-import { db } from "./firebase";
+import { auth, db } from "./firebase";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
@@ -32,12 +32,39 @@ const useStyles = makeStyles((theme) => ({
 function App() {
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
-
   const [posts, setPosts] = useState([]);
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        // user has logged in
+        console.log(authUser)
+        setUser(authUser) 
+
+        if (authUser.displayName) {
+          // dont update username
+        } else {   
+          // if we just created someone
+          return authUser.updateProfile ({
+          displayName: username,
+        })
+        }
+
+      } else {   
+        // user has logged out
+        setUser(null)
+      }
+    });
+    return () => {
+      // perform some cleanup actions 
+    unsubscribe();
+    }
+  }, [user, username]);
 
   // useEffect runs a piece of code based on a specific condition
 
@@ -54,13 +81,22 @@ function App() {
     });
   }, []);
 
-  const signUp = (event) => {};
+  const signUp = (event) => {
+    event.preventDefault();
+
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((authUser) => {
+        authUser.user.updateProfile({
+          displayName: username
+        })
+      }) 
+      .catch((error) => alert(error.message));
+  };
 
   return (
     <div className="app">
-      <Modal open={open} 
-      onClose={() => setOpen(false)}>
-
+      <Modal open={open} onClose={() => setOpen(false)}>
         <div style={modalStyle} className={classes.paper}>
           <form className="app__signup">
             <center>
@@ -70,7 +106,7 @@ function App() {
                 alt=""
               />
             </center>
-            
+
             <Input
               placeholder="username"
               type="text"
@@ -89,7 +125,9 @@ function App() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <Button onClick={signUp}>Sign Up</Button>
+            <Button type="submit" onClick={signUp}>
+              Sign Up
+            </Button>
           </form>
         </div>
       </Modal>
