@@ -7,6 +7,16 @@
   
 }
 
+.app__posts {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.app__postsRight {
+  margin-left: 20px;
+}
+
 .app__header {
   background-color: white;
   padding: 20px;
@@ -14,15 +24,19 @@
   object-fit: contain;
   display: flex;
   justify-content: space-between;
+  
+  
+  
 }
 
 .app__headerImage {
   object-fit: contain;
-  
+  max-width: 140px;
 }
 
 
 .app__signup {
 display: flex;
 flex-direction: column;
+
 }
