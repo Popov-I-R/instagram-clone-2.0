@@ -40,7 +40,7 @@ function App() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(''); //************************** ALSO DOESNT WORK WITH NULL */
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
@@ -50,7 +50,7 @@ function App() {
         setUser(authUser);
       } else {
         // user has logged out
-        setUser(null);
+        setUser(''); // THIS DOESNT WORK WITH NULL ******************
       }
     });
     return () => {
@@ -100,7 +100,12 @@ function App() {
   return (
     <div className="app">
 
-<Imageupload></Imageupload>
+{user.displayName ? (
+  <Imageupload username={user.displayName}/>
+): (
+  <h3>You need to Login to upload</h3>
+)}
+
 
       <Modal 
       open={open} 
