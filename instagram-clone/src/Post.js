@@ -8,6 +8,8 @@ function Post({ postId, user, username, caption, imageUrl }) {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
 
+
+useEffect(( ) => {
   let unsubscribe;
   if (postId) {
     unsubscribe = db
@@ -15,14 +17,14 @@ function Post({ postId, user, username, caption, imageUrl }) {
       .doc(postId)
       .collection("comments")
       .orderBy('timestamp', 'desc')
-      .onSnapshot((snapshot) => {
-        setComments(snapshot.docs.map((doc) => doc.data()));
+      .onSnapshot((snapshot) => { 
+        setComments(snapshot.docs.map(( doc) => doc.data( )));
       });
   }
-  //   return() => {
-  //     unsubscribe()
-  //   };
-  // }, [postId]
+    return( ) => {
+      unsubscribe()
+    };
+  }, [postId])
 
   const postComment = (event) => {;
   event.preventDefault()
@@ -77,7 +79,7 @@ function Post({ postId, user, username, caption, imageUrl }) {
           className="post__input"
           type="text"
           placeholder="Add a comment..."
-          value={comment}
+          value= {comment}
           onChange={(e) => setComment(e.target.value)}
         />
         <button
